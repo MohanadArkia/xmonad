@@ -10,23 +10,28 @@ import System.Exit
 import Graphics.X11.ExtraTypes.XF86
 
 	-- Layouts
-import XMonad.Layout.Spacing
 import XMonad.Layout.NoBorders
-
+import XMonad.Layout.Spacing
+import XMonad.Util.Themes
+	
 	-- Hooks
 import XMonad.Hooks.ManageDocks
 
 	-- Utilities
 import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
+import XMonad.Util.Themes
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
--- The preferred terminal program, which is used in a binding below and by
--- certain contrib modules.
---
+---------------------------------------------
+-- VARIABLES
+---------------------------------------------
+
 myTerminal      = "alacritty"
+myBrowser	= "qutebrowser"
+myFileManager	= "pcmanfm"
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -36,31 +41,17 @@ myFocusFollowsMouse = True
 myClickJustFocuses :: Bool
 myClickJustFocuses = False
 
--- Width of the window border in pixels.
---
+-- Border width
 myBorderWidth   = 2
 
--- modMask lets you specify which modkey you want to use. The default
--- is mod1Mask ("left alt").  You may also consider using mod3Mask
--- ("right alt"), which does not conflict with emacs keybindings. The
--- "windows key" is usually mod4Mask.
---
+-- Mod Key
 myModMask       = mod4Mask
 
--- The default number of workspaces (virtual screens) and their names.
--- By default we use numeric strings, but any string may be used as a
--- workspace name. The number of workspaces is determined by the length
--- of this list.
---
--- A tagging example:
---
--- > workspaces = ["web", "irc", "code" ] ++ map show [4..9]
---
+-- Workspaces
 myWorkspaces :: [String]
 myWorkspaces    = ["1","2","3","4","5","6","7","8","9"]
 
--- Border colors for unfocused and focused windows, respectively.
---
+-- Border Colors
 myNormalBorderColor  = "#dddddd"
 myFocusedBorderColor = "#7070ff"
 
@@ -70,7 +61,7 @@ myFocusedBorderColor = "#7070ff"
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 	
     -- launch a terminal
-    [ ((modm .|. shiftMask, xK_Return), spawn $ XMonad.terminal conf)
+    [ ((modm .|. shiftMask, xK_Return), spawn myTerminal)
 	
     -- volume keys
     , ((0, xF86XK_AudioMute), spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")
@@ -98,7 +89,13 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     
     -- Lock screen with xScreenSaver
     , ((modm .|. shiftMask, xK_x     ), spawn "xscreensaver-command -lock")
-    
+   
+    -- Launch Qutebrowser
+    , ((modm .|. shiftMask, xK_b     ), spawn myBrowser)
+	
+    -- Launch File Manager 
+    , ((modm .|. shiftMask, xK_f     ), spawn myFileManager)
+ 
     -- Fullscreen
     , ((modm,               xK_f     ), toggleFullscreen)
     
@@ -140,12 +137,6 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- Deincrement the number of windows in the master area
     , ((modm              , xK_period), sendMessage (IncMasterN (-1)))
-
-    -- Toggle the status bar gap
-    -- Use this binding with avoidStruts from Hooks.ManageDocks.
-    -- See also the statusBar function from Hooks.DynamicLog.
-    --
-    -- , ((modm              , xK_b     ), sendMessage ToggleStruts)
     
     -- Change keyboard layout
     --, ((modm .|. shiftMask, xK_a), spawn "setxkbmap -layout ar")
@@ -200,14 +191,8 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
     ]
 
 ------------------------------------------------------------------------
--- Layouts:
--- You can specify and transform your layouts by modifying these values.
--- If you change layout bindings be sure to use 'mod-shift-space' after
--- restarting (with 'mod-q') to reset your layout state to the new
--- defaults, as xmonad preserves your old layout settings by default.
---
--- The available layouts.  Note that each layout is separated by |||,
--- which denotes layout choice.
+-- LAYOUTS
+------------------------------------------------------------------------
 
 mySpacing = spacingRaw False            -- False=Apply even when single window
                        (Border 5 5 5 5) -- Screen border size top bot rght lft
@@ -215,7 +200,7 @@ mySpacing = spacingRaw False            -- False=Apply even when single window
                        (Border 5 5 5 5) -- Window border size
                        True             -- Enable window borders
 
-myLayout = avoidStruts (mySpacing $ tiled ||| Mirror tiled ||| Full)
+myLayout = avoidStruts $ mySpacing $ tiled ||| Mirror tiled ||| Full
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
@@ -277,9 +262,7 @@ myLogHook = return ()
 -- per-workspace layout choices.
 --
 -- By default, do nothing.
-myStartupHook = do
- spawnOnce "nitrogen --restore &"
- spawnOnce "picom &"
+myStartupHook = return ()
 
 ------------------------------------------------------------------------
 -- Now run xmonad with all the defaults we set up.
