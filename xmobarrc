@@ -18,5 +18,5 @@ Config { font = "xft:Noto Sans:pixelsize=15"
 			]
         , sepChar = "%"
         , alignSep = "}{"
-        , template = "}{<fc=#9c87db>%cpu%</fc> | <fc=#9c87db>%memory%</fc> | <fc=#9c87db>%battery%</fc> | <fc=#FFA500>%default:Master%</fc> | <fc=#FFFF00>%date%</fc> | <fc=#00FFFF>Mohanad Arkia</fc>"
+        , template = "}{<fc=#9c87db>%cpu%</fc> | <fc=#9c87db>%memory%</fc> | <fc=#9c87db>%battery%</fc> | <fc=#FFA500>%default:Master%</fc> | <fc=#FFFF00>%date%</fc>"
         }
