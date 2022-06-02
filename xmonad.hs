@@ -12,7 +12,6 @@ import Graphics.X11.ExtraTypes.XF86
 	-- Layouts
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spacing
-import XMonad.Util.Themes
 	
 	-- Hooks
 import XMonad.Hooks.ManageDocks
@@ -48,8 +47,7 @@ myBorderWidth   = 2
 myModMask       = mod4Mask
 
 -- Workspaces
-myWorkspaces :: [String]
-myWorkspaces    = ["1","2","3","4","5","6","7","8","9"]
+myWorkspaces = ["1","2","3","4","5","6","7","8","9"]
 
 -- Border Colors
 myNormalBorderColor  = "#dddddd"
@@ -73,7 +71,10 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((0, xF86XK_MonBrightnessDown), spawn "lux -s 10%")
 
     -- launch dmenu
-    , ((modm,               xK_p     ), spawn "dmenu_run")
+    -- , ((modm,               xK_p     ), spawn "dmenu_run")
+   
+    -- launch rofi
+    , ((modm,               xK_p     ), spawn "rofi -show drun")
 
     -- launch gmrun
     , ((modm .|. shiftMask, xK_p     ), spawn "gmrun")
@@ -270,7 +271,7 @@ myStartupHook = return ()
 -- Run xmonad with the settings you specify. No need to modify this.
 --
 main = do
-  xmproc <- spawnPipe "xmobar /home/mohanad/.config/xmobar/xmobarrc"
+  xmproc <- spawnPipe "xmobar /home/mohanad/.config/xmobar/xmobarrc"  
   xmonad $ docks defaults
 
 toggleFullscreen :: X ()
