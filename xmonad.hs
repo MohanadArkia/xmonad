@@ -12,7 +12,10 @@ import Graphics.X11.ExtraTypes.XF86
 	-- Layouts
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spacing
-	
+
+	-- Data
+import Data.Maybe (fromJust)
+
 	-- Hooks
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.DynamicLog(dynamicLogWithPP, wrap, xmobarPP, xmobarColor, shorten, PP(..))
@@ -55,6 +58,11 @@ myModMask       = mod4Mask
 
 -- Workspaces
 myWorkspaces = [" dev ", " www ", " sys ", " doc ", " vbox ", " chat ", " mus ", " vid ", " gfx "]
+myWorkspaceIndices = M.fromList $ zipWith (,) myWorkspaces [1..] -- (,) == \x y -> (x,y)
+
+clickable ws = "<action=xdotool key super+"++show i++">"++ws++"</action>"
+    where i = fromJust $ M.lookup ws myWorkspaceIndices
+
 
 -- Border Colors
 myNormalBorderColor :: String
@@ -301,12 +309,12 @@ main = do
 		, ppCurrent = xmobarColor textColor "" . wrap
 			 ("<box type=Bottom width=2 mb=2 color=" ++ underLineColor ++ ">") "</box>"
 	-- Visible but not current workspace
-		, ppVisible = xmobarColor textColor ""
+		, ppVisible = xmobarColor textColor "" . clickable
 	-- Hidden workspace
  	        , ppHidden = xmobarColor usedWorkspaceColor "" . wrap
- 		 ("<box type=Top width=2 mt=2 color=" ++ upperLineColor ++ ">") "</box>"
+ 		 ("<box type=Top width=2 mt=2 color=" ++ upperLineColor ++ ">") "</box>" . clickable
  	-- Hidden workspaces (no windows)
- 		, ppHiddenNoWindows = xmobarColor unusedWorkspaceColor ""
+ 		, ppHiddenNoWindows = xmobarColor unusedWorkspaceColor "" . clickable
  	-- Title of active window
  		, ppTitle = xmobarColor titleColor "" . shorten 60
  	-- Separator character
